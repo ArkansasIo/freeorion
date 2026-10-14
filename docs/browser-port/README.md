@@ -1,28 +1,40 @@
-# FreeOrion browser deployment notes
-
-This fork contains the native FreeOrion C++ game source. GitHub Pages can host static web assets, but it cannot execute the native desktop client directly. Do not treat the repository root as a Pages site or publish the full C++ source tree as a web app.
+# FreeOrion browser port: status and implementation plan
 
 ## Current status
 
-- Native project: C++ with CMake and platform-specific build workflows.
-- Native rendering/runtime dependencies include OpenGL, SDL2, OpenAL, Python, Boost, and other libraries (see `BUILD.md`).
-- Repository Pages setting: currently not enabled (verify in Settings → Pages before expecting a published URL).
-- Actions runs were not returned by the repository API at the time these notes were written; this does not prove that native builds fail.
+The repository's main client is a native C++20 application. The current build expects desktop-oriented OpenGL, GiGi, SDL2, OpenAL, Boost, Python/libpython, and other libraries. GitHub Pages cannot run the native executable as-is.
 
-## Recommended route to a real browser build
+A browser gameplay slice is now available at [the Browser Lab](../play/). It is a **separate, simplified prototype**, not a port of the FreeOrion engine. It currently demonstrates:
 
-1. Keep the existing native build and packaging workflows unchanged.
-2. Create a separate experimental browser-port target rather than trying to run the desktop executable in Pages.
-3. Audit browser compatibility of the rendering/input/audio stack and the Python integration. The current native OpenGL and desktop API assumptions are likely to require a port or replacement.
-4. Build the compatible C++ subset with Emscripten to WebAssembly/WebGL, with explicit filesystem/resource packaging for `default/` data files.
-5. Start with a small smoke-test target and minimal asset bundle before attempting to port the complete client. Validate memory use, save/load behavior, audio, input, networking, and browser security constraints.
-6. Publish only the produced static output (`.html`, `.js`, `.wasm`, required data files) from a dedicated directory or a separate Pages branch using a GitHub Actions Pages workflow. Never publish CMake build files or secrets.
-7. Verify the deployed URL and browser console after deployment; a green upload job by itself is not proof the game runs.
+- An interactive star map with selectable systems and procedural starfield rendering.
+- Turn advancement and empire resource income.
+- Moving a small fleet between systems.
+- Colonizing unclaimed systems when the fleet is present.
+- Building scout ships, funding research, and advancing a small technology tree.
+- Browser-local save/load using localStorage.
+- A custom Pages entry point and a 404 recovery page.
 
-## Current Pages behavior
+The Browser Lab intentionally uses original, simplified sample system data and rules. It does not load or execute the native C++ game, FreeOrion Content Scripts (FOCS), original AI, full combat, diplomacy, multiplayer/server networking, native save files, or the complete asset and localization catalogs.
 
-There is no ready-to-publish browser build directory established by this note. Enabling Pages now would not convert the native game into a browser game. Once a browser build exists, configure GitHub Pages to deploy its generated static output, not the root source tree.
+## Work still required for the full game
 
-## Source and licensing
+A real browser port is a multi-stage engine and dependency project, not just a Pages configuration change.
 
-Review the root `README.md`, `BUILD.md`, `default/COPYING`, and the licenses of bundled third-party libraries and assets before redistributing any web build. A browser port may introduce additional distribution and attribution requirements.
+1. **Build a compatibility inventory.** Identify native-only APIs and dependency versions across the client, server, GiGi, OpenGL, SDL2, OpenAL, Python integration, file-system/resource loading, threading, and networking.
+2. **Create an Emscripten toolchain target.** Add a separate experimental CMake toolchain/configuration and compile a minimal native-independent C++ smoke test to WebAssembly before attempting the full application.
+3. **Port the rendering and input layer.** Map the rendering path to WebGL/WebGL2 and browser input, viewport scaling, focus, and context-loss handling. The existing OpenGL/GiGi code cannot be assumed to work unchanged.
+4. **Resolve scripting.** Port or replace Python/libpython integration and validate FOCS parsing/runtime behavior in a browser-compatible environment.
+5. **Package content deliberately.** Build a minimized, licensed resource bundle with predictable virtual filesystem paths; avoid shipping native binaries or unnecessary development files.
+6. **Port persistence and platform services.** Implement browser-safe save/load with IndexedDB or an equivalent persistent filesystem, and adapt audio, timing, threading, and network transport to browser restrictions.
+7. **Integrate real game logic.** Connect the browser client to the actual FreeOrion simulation, content rules, AI, diplomacy, combat, and turn-resolution systems. The simplified Browser Lab is not a substitute for these systems.
+8. **Test and publish.** Add deterministic simulation tests, WebAssembly smoke tests, browser automation, memory/performance checks, and end-to-end deployment verification. Publish only generated static output from a dedicated directory.
+
+## Deployment
+
+The GitHub Pages workflow publishes the static contents of `docs/`. The browser slice is therefore available at the relative route `play/` once Pages is enabled and the workflow succeeds. Check the [Pages workflow](../../actions/workflows/pages.yml) and [Pages settings](../../settings/pages) for the actual deployment state.
+
+A successful static-site deployment proves only that the website and prototype were published; it does not prove that the complete native game runs in a browser.
+
+## License and provenance
+
+The FreeOrion source code is GPL-2.0 and game assets/content include CC BY-SA 3.0 terms as described in the root README and `default/COPYING`. Before packaging original resources in a web build, preserve required notices and confirm licenses for all bundled third-party dependencies. The Browser Lab's sample star map and rules are a new, simplified demonstration and do not bundle the native asset catalog.
