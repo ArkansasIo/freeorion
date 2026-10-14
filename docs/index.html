@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="FreeOrion is an open-source, turn-based 4X space empire game. Explore the source, build instructions, and releases.">
+  <title>FreeOrion — Space Empire Strategy</title>
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--panel:#101f32;--line:#29435e;--text:#eaf3ff;--muted:#a8bdd3;--accent:#63d8ff;--gold:#ffc879}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#193b5c 0,transparent 55%),var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+    a{color:var(--accent)}a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+    .wrap{width:min(1120px,92%);margin:auto}.nav{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;border-bottom:1px solid var(--line)}
+    .brand{font-weight:800;letter-spacing:.14em}.nav a{text-decoration:none;margin-left:18px;color:var(--muted)}
+    .hero{padding:76px 0 54px;display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:center}
+    .eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.18em;font-size:.8rem;font-weight:700}
+    h1{font-size:clamp(2.5rem,6vw,5rem);line-height:1.02;letter-spacing:-.045em;margin:.5rem 0 1rem}
+    .lead{font-size:1.15rem;color:var(--muted);max-width:680px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.btn{display:inline-block;padding:11px 17px;border-radius:8px;border:1px solid var(--line);text-decoration:none;font-weight:700}.primary{background:var(--accent);color:#04101d;border-color:var(--accent)}
+    .orbit{min-height:270px;position:relative;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#102a43,#07111f)}
+    .planet{width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 30% 28%,#d3f6ff,#4899ca 32%,#1b426e 65%,#0b1b31);box-shadow:0 0 55px #3da6df55}
+    .ring{position:absolute;width:280px;height:100px;border:1px solid #63d8ff88;border-radius:50%;transform:rotate(-24deg)}.ring.two{width:340px;height:150px;transform:rotate(28deg);border-color:#ffc87966}
+    .star{position:absolute;color:#eaf3ff}.s1{top:15%;left:20%}.s2{top:28%;right:18%}.s3{bottom:19%;left:16%}.s4{bottom:14%;right:23%}
+    section{padding:28px 0 52px}.section-title{font-size:1.7rem;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{background:#0d1a2a;border:1px solid var(--line);border-radius:12px;padding:22px}.card h3{margin:0 0 8px}.card p{color:var(--muted);margin:0 0 14px}.card a{font-weight:700}
+    .notice{padding:18px 20px;border-left:3px solid var(--gold);background:#201d19;border-radius:0 8px 8px 0;color:#e8d8bf}
+    footer{border-top:1px solid var(--line);padding:24px 0 38px;color:var(--muted);font-size:.9rem}
+    @media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:48px}.grid{grid-template-columns:1fr}.nav{align-items:flex-start;flex-direction:column}.nav a{margin:0 14px 0 0}.orbit{min-height:220px}}
+  </style>
+</head>
+<body>
+<header class="wrap nav">
+  <div class="brand">FREEORION</div>
+  <nav aria-label="Main navigation">
+    <a href="#game">The game</a><a href="#source">Source code</a><a href="#build">Build</a><a href="#downloads">Downloads</a>
+  </nav>
+</header>
+<main>
+  <section class="wrap hero" id="game">
+    <div>
+      <div class="eyebrow">Explore · Expand · Exploit · Exterminate</div>
+      <h1>Shape your<br>galactic empire.</h1>
+      <p class="lead">FreeOrion is a free, open-source, turn-based 4X space empire and galactic conquest game. Explore a procedurally generated universe, develop your civilization, research technologies, and compete for galactic influence.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/ArkansasIo/freeorion/releases">Get a release</a>
+        <a class="btn" href="https://github.com/ArkansasIo/freeorion">Browse full source</a>
+      </div>
+    </div>
+    <div class="orbit" role="img" aria-label="Stylized planet and orbital paths in deep space">
+      <span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">·</span><span class="star s4">✦</span>
+      <div class="ring"></div><div class="ring two"></div><div class="planet"></div>
+    </div>
+  </section>
+  <section class="wrap" id="source">
+    <h2 class="section-title">Explore the project</h2>
+    <div class="grid">
+      <article class="card"><h3>Full source code</h3><p>Browse the C++ engine, user interface, game content, scripts, and project configuration in the repository.</p><a href="https://github.com/ArkansasIo/freeorion/tree/master">Browse repository →</a></article>
+      <article class="card"><h3>Game content & data</h3><p>Explore the default game resources, scripting content, art assets, and string tables included with the project.</p><a href="https://github.com/ArkansasIo/freeorion/tree/master/default">Browse default resources →</a></article>
+      <article class="card" id="downloads"><h3>Releases</h3><p>Use the published native releases for supported desktop platforms. This Pages site is a project portal, not a game executable.</p><a href="https://github.com/freeorion/freeorion/releases">View upstream releases →</a></article>
+      <article class="card" id="build"><h3>Build instructions</h3><p>Review compiler, dependency, CMake, and platform-specific build guidance before compiling from source.</p><a href="https://github.com/ArkansasIo/freeorion/blob/master/BUILD.md">Read BUILD.md →</a></article>
+      <article class="card"><h3>Development activity</h3><p>Review commits and inspect changes made to this fork.</p><a href="https://github.com/ArkansasIo/freeorion/commits/master">View commit history →</a></article>
+      <article class="card"><h3>Contribute</h3><p>Read contribution guidance and coordinate improvements through the repository.</p><a href="https://github.com/ArkansasIo/freeorion/blob/master/CONTRIBUTING.md">Contribution guide →</a></article>
+    </div>
+  </section>
+  <section class="wrap">
+    <div class="notice"><strong>Browser-playability note:</strong> GitHub Pages serves static websites. The existing FreeOrion project is a native C++ game with desktop rendering and runtime dependencies; this page does not run the full game in a browser. A separate WebAssembly/WebGL port is required for that.</div>
+  </section>
+</main>
+<footer><div class="wrap">FreeOrion is an open-source community project. Review the repository’s license and bundled third-party notices before redistributing source code, assets, or builds. <br>Project fork: <a href="https://github.com/ArkansasIo/freeorion">ArkansasIo/freeorion</a> · Original project: <a href="https://github.com/freeorion/freeorion">freeorion/freeorion</a></div></footer>
+</body>
+</html>
