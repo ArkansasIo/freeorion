@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "docs/**"
+      - "scripts/check-pages.mjs"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -16,7 +17,7 @@ permissions:
 
 concurrency:
   group: github-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,8 +25,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-      - name: Validate Pages entry point
-        run: test -s docs/index.html
+      - name: Set up GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Validate Pages files and navigation
+        run: node scripts/check-pages.mjs
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
