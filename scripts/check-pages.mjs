@@ -17,7 +17,7 @@ if (!/<html\s+lang=["']en["']/i.test(html)) {
 if (!/<main\b/i.test(html) || !/<title>[^<]+<\/title>/i.test(html)) {
   throw new Error("docs/index.html must include a main landmark and a title.");
 }
-if (!/404/.test(notFound) || !/href=["']\.\/["']/.test(notFound)) {
+if (!/404/.test(notFound) || !/href=["']\/freeorion\/["']/.test(notFound)) {
   throw new Error("docs/404.html must identify the 404 and link back to the site root.");
 }
 if (!/href=["']\.\/play\//.test(html)) {
