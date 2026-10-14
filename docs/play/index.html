@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>FreeOrion Browser Port — Experimental</title>
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#0e1d30;--line:#28445f;--text:#e8f2ff;--muted:#a6bdd5;--cyan:#62d9ff;--gold:#ffd18b;--green:#83e6b0;--red:#ff9e9e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}button,select{font:inherit}button{background:#15334d;border:1px solid #315875;border-radius:7px;color:var(--text);padding:9px 11px;cursor:pointer}button:hover:not(:disabled){border-color:var(--cyan);background:#1a4563}button:disabled{opacity:.38;cursor:not-allowed}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line);background:#091727;position:sticky;top:0;z-index:2}.brand{font-weight:900;letter-spacing:.13em}.brand span{color:var(--cyan)}.status{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted)}.status b{color:var(--text)}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;min-height:calc(100vh - 54px)}.mapwrap{min-width:0;position:relative;background:radial-gradient(ellipse at 50% 50%,#102742,#07111f 75%)}canvas{width:100%;height:calc(100vh - 55px);min-height:470px;display:block;cursor:crosshair}.maptip{position:absolute;left:16px;bottom:16px;color:var(--muted);background:#081625dd;border:1px solid var(--line);padding:8px 10px;border-radius:7px;pointer-events:none}.side{border-left:1px solid var(--line);background:var(--panel);padding:16px;overflow:auto}.eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);font-weight:800}h1{font-size:20px;margin:5px 0 4px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 9px}.sub{color:var(--muted);font-size:12px}.box{border:1px solid var(--line);border-radius:9px;padding:12px;background:#0a1828}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{background:#10263c;padding:8px;border-radius:6px}.metric small{display:block;color:var(--muted)}.metric b{font-size:18px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.wide{width:100%;margin-top:8px}.primary{background:#164763;border-color:#3685a8}.log{font-size:12px;color:var(--muted);display:grid;gap:7px}.log div{border-left:2px solid #315875;padding-left:8px}.good{color:var(--green)}.warn{color:var(--gold)}.bad{color:var(--red)}.selected{color:var(--cyan)}.fleetrow{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #1c344a}.footer{padding-top:16px;margin-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}a{color:var(--cyan)}@media(max-width:800px){.layout{grid-template-columns:1fr}.side{border-left:0;border-top:1px solid var(--line)}canvas{height:58vh;min-height:360px}.top{align-items:flex-start;flex-direction:column}.status{gap:8px 12px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">FREE<span>ORION</span> / BROWSER LAB</div><div class="status"><span>TURN <b id="turnTop">1</b></span><span>NAQUADAH <b id="cashTop">500</b></span><span>RESEARCH <b id="rpTop">0</b></span><span>EMPIRE <b id="empTop">1 system</b></span></div></header>
+<div class="layout"><main class="mapwrap"><canvas id="map" aria-label="Interactive star map. Click a star system to select it."></canvas><div class="maptip">SELECT A STAR · COLONIZE · BUILD FLEETS · ADVANCE THE TURN</div></main>
+<aside class="side"><div class="eyebrow">Command interface / alpha</div><h1 id="sysTitle">Sol System</h1><div class="sub" id="sysSub">Homeworld · Terran · Secure</div>
+<h2>Empire resources</h2><div class="grid"><div class="metric"><small>Credits</small><b id="cash">500</b></div><div class="metric"><small>Industry</small><b id="industry">12</b></div><div class="metric"><small>Research / turn</small><b id="research">8</b></div><div class="metric"><small>Fleet strength</small><b id="strength">2</b></div></div>
+<h2>Selected system</h2><div class="box"><div id="systemInfo">Your homeworld. The beginning of a new interstellar civilization.</div><div class="sub" id="systemStats" style="margin-top:8px"></div><div class="actions" style="margin-top:12px"><button id="colonize" class="primary">Colonize · 150</button><button id="buildShip">Build scout · 100</button></div><button id="moveFleet" class="wide">Move fleet here</button></div>
+<h2>Technology</h2><div class="box"><b id="techTitle">Basic Propulsion</b><div class="sub" id="techDesc">Improve fleet movement and unlock distant systems.</div><div style="display:flex;justify-content:space-between;margin:9px 0"><span class="sub">Progress</span><b id="techProgress">0 / 30 RP</b></div><div style="height:6px;background:#1c344a;border-radius:9px;overflow:hidden"><div id="techBar" style="height:100%;width:0;background:var(--cyan)"></div></div><button id="researchBtn" class="wide">Fund research · 75</button></div>
+<h2>Fleet command</h2><div class="box"><div class="fleetrow"><span>Scout fleet</span><b id="fleetCount">2 ships</b></div><div class="fleetrow"><span>Current location</span><b id="fleetLocation">Sol</b></div><div class="sub" style="margin-top:8px">Select another star and move your fleet there. Unowned systems can be colonized once a fleet is present.</div></div>
+<h2>Operations</h2><div class="actions"><button id="saveBtn">Save game</button><button id="loadBtn">Load save</button><button id="newBtn">New game</button><button id="turnBtn" class="primary">End turn ▶</button></div>
+<h2>Event log</h2><div id="log" class="log" aria-live="polite"></div>
+<div class="footer">Experimental browser gameplay slice, not the full native FreeOrion engine. This build uses a new simplified rules simulation and procedural canvas map; original C++ gameplay, AI, content scripts, diplomacy, combat, saves and networking are not yet ported. <br><br><a href="../">Project portal</a> · <a href="https://github.com/ArkansasIo/freeorion/tree/master">C++ source</a></div></aside></div>
+<script>
+(() => {
+"use strict";
+const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
+const $=id=>document.getElementById(id);
+const seedSystems=[
+ {id:0,name:"Sol",x:.50,y:.52,planet:"Terran",value:8,owner:"player",income:12,industry:12},
+ {id:1,name:"Alpha Centauri",x:.34,y:.37,planet:"Oceanic",value:5,owner:null,income:8,industry:5},
+ {id:2,name:"Barnard's Star",x:.66,y:.30,planet:"Barren",value:3,owner:null,income:4,industry:4},
+ {id:3,name:"Sirius",x:.76,y:.56,planet:"Desert",value:6,owner:null,income:7,industry:7},
+ {id:4,name:"Epsilon Eridani",x:.25,y:.63,planet:"Terran",value:7,owner:null,income:9,industry:8},
+ {id:5,name:"Tau Ceti",x:.44,y:.20,planet:"Jungle",value:6,owner:null,income:7,industry:6},
+ {id:6,name:"Procyon",x:.84,y:.25,planet:"Ice",value:3,owner:"rival",income:5,industry:5},
+ {id:7,name:"Wolf 359",x:.17,y:.39,planet:"Barren",value:2,owner:null,income:3,industry:3},
+ {id:8,name:"Vega",x:.60,y:.75,planet:"Oceanic",value:7,owner:null,income:8,industry:8},
+ {id:9,name:"Altair",x:.36,y:.80,planet:"Desert",value:4,owner:null,income:5,industry:5},
+ {id:10,name:"Rigel",x:.91,y:.72,planet:"Volcanic",value:5,owner:null,income:6,industry:7},
+ {id:11,name:"Polaris",x:.10,y:.17,planet:"Ice",value:4,owner:null,income:5,industry:4},
+ {id:12,name:"Kepler",x:.70,y:.13,planet:"Terran",value:8,owner:null,income:10,industry:8}
+];
+let state,selected=0,stars=[],W=900,H=650,dpr=1;
+function fresh(){return {turn:1,cash:500,rp:0,industry:12,systems:seedSystems.map(s=>({...s})),fleet:{ships:2,at:0},tech:{progress:0,level:0},log:["Turn 1: The expedition departs from Sol.","Science officers detect unclaimed habitable systems.","A rival civilization has been detected near Procyon."]}}
+function note(s){state.log.unshift("Turn "+state.turn+": "+s);state.log=state.log.slice(0,7);renderLog()}
+function renderLog(){$("log").innerHTML=state.log.map(s=>"<div>"+escapeHTML(s)+"</div>").join("")}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function sys(){return state.systems.find(s=>s.id===selected)}
+function owned(){return state.systems.filter(s=>s.owner==="player")}
+function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);W=r.width;H=r.height;canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);draw()}
+function pos(s){return {x:35+s.x*(W-70),y:35+s.y*(H-70)}}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ const grad=ctx.createRadialGradient(W*.5,H*.5,10,W*.5,H*.5,Math.max(W,H)*.7);grad.addColorStop(0,"#102b47");grad.addColorStop(1,"#07111f");ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+ stars.forEach(st=>{ctx.fillStyle="rgba(190,220,255,"+st.a+")";ctx.beginPath();ctx.arc(st.x*W,st.y*H,st.r,0,Math.PI*2);ctx.fill()});
+ // Connection lanes.
+ state.systems.forEach(a=>state.systems.forEach(b=>{if(a.id>=b.id)return;const p=pos(a),q=pos(b),dist=Math.hypot(p.x-q.x,p.y-q.y);if(dist<Math.min(W,H)*.34){ctx.strokeStyle="rgba(70,131,171,"+(dist<Math.min(W,H)*.23?".25":".10")+")";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke()}}));
+ // Fleet path
+ const home=pos(state.systems[state.fleet.at]),sel=pos(sys());ctx.setLineDash([4,5]);ctx.strokeStyle="#62d9ff";ctx.globalAlpha=.8;ctx.beginPath();ctx.moveTo(home.x,home.y);ctx.lineTo(sel.x,sel.y);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+ state.systems.forEach(s=>{const p=pos(s),r=s.id===selected?10:7;ctx.beginPath();ctx.arc(p.x,p.y,r+7,0,Math.PI*2);ctx.fillStyle=s.owner==="player"?"rgba(98,217,255,.10)":s.owner==="rival"?"rgba(255,158,158,.10)":"rgba(170,196,221,.06)";ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=s.owner==="player"?"#62d9ff":s.owner==="rival"?"#ff8c8c":s.planet==="Terran"||s.planet==="Oceanic"||s.planet==="Jungle"?"#83e6b0":"#b4c6d8";ctx.fill();if(s.id===selected){ctx.strokeStyle="#ffd18b";ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,r+5,0,Math.PI*2);ctx.stroke()}ctx.font="12px system-ui";ctx.textAlign="center";ctx.fillStyle=s.id===selected?"#ffffff":"#b7cbe0";ctx.fillText(s.name,p.x,p.y+23);if(s.owner==="player"){ctx.font="10px system-ui";ctx.fillStyle="#62d9ff";ctx.fillText("CONTROLLED",p.x,p.y+35)}})
+}
+function render(){
+ const s=sys(),fleetHere=state.fleet.at===s.id;
+ $("turnTop").textContent=state.turn;$("cashTop").textContent=state.cash;$("rpTop").textContent=state.rp;
+ $("empTop").textContent=owned().length+" system"+(owned().length===1?"":"s");
+ $("cash").textContent=state.cash;$("industry").textContent=owned().reduce((n,a)=>n+a.industry,0);$("research").textContent=owned().reduce((n,a)=>n+Math.max(2,Math.floor(a.value/2)),0);$("strength").textContent=state.fleet.ships;
+ $("sysTitle").textContent=s.name;$("sysSub").textContent=(s.owner==="player"?"Colonized":s.owner==="rival"?"Rival territory": "Unclaimed")+" · "+s.planet+(fleetHere?" · Fleet present":"");
+ $("systemInfo").textContent=s.owner==="player"?"This system is part of your empire. Its population and industry contribute resources each turn.":s.owner==="rival"?"A rival empire controls this system. Direct confrontation is not implemented in this prototype.":s.planet+" world. Survey data estimates a colony value of "+s.value+".";
+ $("systemStats").textContent="Colony value "+s.value+" · Industry "+s.industry+" · Estimated income "+s.income+"/turn";
+ $("colonize").disabled=s.owner!==null||!fleetHere||state.cash<150;$("colonize").textContent=s.owner==="player"?"Already colonized":s.owner==="rival"?"Rival territory":!fleetHere?"Fleet required":"Colonize · 150";
+ $("buildShip").disabled=s.owner!=="player"||state.cash<100;$("moveFleet").disabled=!state.fleet.ships||fleetHere;$("moveFleet").textContent=fleetHere?"Fleet is here":"Move fleet here";
+ $("fleetCount").textContent=state.fleet.ships+" ship"+(state.fleet.ships===1?"":"s");$("fleetLocation").textContent=state.systems[state.fleet.at].name;
+ const cost=30+state.tech.level*20;$("techTitle").textContent=["Basic Propulsion","Improved Drives","Deep Space Navigation","Interstellar Logistics"][Math.min(3,state.tech.level)];$("techDesc").textContent=["Improve fleet movement and unlock distant systems.","Advanced engines reduce the cost of long expeditions.","Your navigators chart the far reaches of known space.","Your empire's scientific institutions are operating at peak efficiency."][Math.min(3,state.tech.level)];$("techProgress").textContent=state.tech.progress+" / "+cost+" RP";$("techBar").style.width=Math.min(100,state.tech.progress/cost*100)+"%";$("researchBtn").disabled=state.cash<75||state.tech.level>=3;$("researchBtn").textContent=state.tech.level>=3?"Technology complete":"Fund research · 75";
+ renderLog();draw()
+}
+function colonize(){const s=sys();if(s.owner!==null||state.fleet.at!==s.id||state.cash<150)return;state.cash-=150;s.owner="player";note("Colony established at "+s.name+".");render()}
+function buildShip(){const s=sys();if(s.owner!=="player"||state.cash<100)return;state.cash-=100;state.fleet.ships++;note("A scout ship was commissioned at "+s.name+". Fleet strength increased.");render()}
+function research(){if(state.cash<75||state.tech.level>=3)return;state.cash-=75;state.tech.progress+=15;let cost=30+state.tech.level*20;while(state.tech.progress>=cost&&state.tech.level<3){state.tech.progress-=cost;state.tech.level++;note("Research complete: "+$("techTitle").textContent+".");cost=30+state.tech.level*20}note("Research funding allocated.");render()}
+function endTurn(){state.turn++;const empire=owned();const income=empire.reduce((n,s)=>n+s.income,0);const rp=empire.reduce((n,s)=>n+Math.max(2,Math.floor(s.value/2)),0);state.cash+=income;state.rp+=rp;state.tech.progress+=rp;let cost=30+state.tech.level*20;if(state.tech.level<3&&state.tech.progress>=cost){state.tech.progress-=cost;state.tech.level++;note("Breakthrough: "+["Basic Propulsion","Improved Drives","Deep Space Navigation","Interstellar Logistics"][state.tech.level-1]+".")}if(state.turn%4===0){const rivals=state.systems.filter(s=>s.owner==="rival");if(rivals.length&&state.turn%8===0){state.cash=Math.max(0,state.cash-15);note("Rival patrols disrupted trade. Credits lost: 15.")}else note("Long-range survey data received. Science output remains stable.")}else note("Empire income +"+income+" credits; research +"+rp+" RP.");render()}
+function save(){try{localStorage.setItem("freeorion-browser-lab-save",JSON.stringify(state));note("Game saved in this browser.");}catch(e){note("Save failed: browser storage unavailable.")}render()}
+function load(){try{const raw=localStorage.getItem("freeorion-browser-lab-save");if(!raw){note("No browser save was found.");render();return}const parsed=JSON.parse(raw);if(!parsed.systems||!parsed.fleet||!parsed.tech)throw new Error("invalid save");state=parsed;selected=state.fleet.at;note("Browser save loaded.");render()}catch(e){note("Could not load save: "+e.message);render()}}
+function newGame(){if(!confirm("Start a new browser-lab campaign? The existing autosave remains until overwritten."))return;state=fresh();selected=0;render()}
+canvas.addEventListener("click",e=>{const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let nearest=null,best=Infinity;state.systems.forEach(s=>{const p=pos(s),d=Math.hypot(p.x-x,p.y-y);if(d<best){best=d;nearest=s}});if(nearest&&best<32){selected=nearest.id;render()}});
+$("colonize").addEventListener("click",colonize);$("buildShip").addEventListener("click",buildShip);$("moveFleet").addEventListener("click",()=>{if(state.fleet.ships){state.fleet.at=selected;note("Fleet arrived at "+sys().name+".");render()}});$("researchBtn").addEventListener("click",research);$("turnBtn").addEventListener("click",endTurn);$("saveBtn").addEventListener("click",save);$("loadBtn").addEventListener("click",load);$("newBtn").addEventListener("click",newGame);
+function init(){state=fresh();stars=Array.from({length:170},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.2,a:Math.random()*.55+.12}));window.addEventListener("resize",resize);resize();render()}
+init();
+})();
+</script>
+</body></html>
