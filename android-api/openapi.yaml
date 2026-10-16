@@ -1,0 +1,62 @@
+openapi: 3.1.0
+info:
+  title: FreeOrion Companion API
+  version: 1.0.0
+  description: Read-only health and project metadata endpoints for the Android companion.
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      responses:
+        "200":
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, service, utc]
+                properties:
+                  status: { type: string, example: ok }
+                  service: { type: string, example: freeorion-companion-api }
+                  utc: { type: string, format: date-time }
+  /api/v1/game:
+    get:
+      summary: Get FreeOrion metadata
+      operationId: getGameInfo
+      responses:
+        "200":
+          description: Static game metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, name, genre, capabilities, limitations]
+                properties:
+                  id: { type: string }
+                  name: { type: string }
+                  genre: { type: string }
+                  source: { type: string, format: uri }
+                  capabilities:
+                    type: array
+                    items: { type: string }
+                  limitations:
+                    type: array
+                    items: { type: string }
+  /api/v1/status:
+    get:
+      summary: Get API and bridge status
+      operationId: getServiceStatus
+      responses:
+        "200":
+          description: API status; game bridge intentionally reports not configured
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  api_version: { type: string }
+                  game_bridge: { type: string, example: not-configured }
