@@ -34,14 +34,15 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
       - uses: android-actions/setup-android@v3
       - name: Install Android SDK platform
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Build debug APK
         working-directory: android-api/app
         run: |
-          gradle --version
-          gradle assembleDebug --no-daemon
+          gradle wrapper --gradle-version 8.9
+          ./gradlew assembleDebug --no-daemon
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
