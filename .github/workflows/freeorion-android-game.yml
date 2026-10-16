@@ -1,0 +1,24 @@
+name: FreeOrion Android Game APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      architectures:
+        description: "Native Android ABI builds"
+        required: true
+        type: choice
+        options:
+          - all
+          - arm64-v8a
+          - x86_64
+        default: all
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build FreeOrion Android game
+    # This calls the existing upstream build steps through the repository's shared workflow.
+    # The workflow file uses artifacts from Android NDK + FreeOrion SDK and exports Godot APK.
+    uses: ./.github/workflows/_build-android.yml
