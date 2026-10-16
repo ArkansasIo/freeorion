@@ -4,6 +4,11 @@ on:
     branches:
       - master
       - 'release-v*'
+
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   android:
     uses: ./.github/workflows/_build-android.yml
