@@ -10,6 +10,8 @@ path-exclude=/usr/share/cmake-3.18/Help/*\n\
 
 RUN echo "# don't install static libraries inside container\n\
 path-exclude=/usr/lib/i386-linux-gnu/*.a\n\
+# Boost 1.92 CMake exports require this static archive even for shared use.\n\
+path-include=/usr/lib/i386-linux-gnu/libboost_exception.a\n\
 path-exclude=/usr/lib/python3.9/config-i386-linux-gnu/*.a\n\
 path-include=/usr/lib/i386-linux-gnu/libc_nonshared.a\n\
 path-include=/usr/lib/gcc/i386-linux-gnu/11/libgcc.a\n\
